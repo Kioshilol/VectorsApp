@@ -1,14 +1,6 @@
-//
-//  AddVectorViewModel.swift
-//  Vectors
-//
-//  Created by paintmethecolorofchaos on 15.03.25.
-//
-
 import Foundation
 
 class AddVectorViewModel: ObservableObject{
-    
     private let vectorService: VectorServiceProtocol = CompositionRoot.shared.resolve(VectorServiceProtocol.self)
     
     @Published var startX: String = "";
@@ -24,8 +16,7 @@ class AddVectorViewModel: ObservableObject{
         : "Unknown \(vectorService.vectors.count)"
     }
     
-    func tryCreateVector() -> Bool{
-        
+    func tryCreateVector() -> Bool {
         errorText = ""
         
         guard let startXValue = Double(startX) else {
@@ -48,7 +39,7 @@ class AddVectorViewModel: ObservableObject{
             return false
         }
         
-        vectorService.createVector(
+         _ = vectorService.createVector(
             startX: startXValue,
             endX: endXValue,
             startY: startYValue,

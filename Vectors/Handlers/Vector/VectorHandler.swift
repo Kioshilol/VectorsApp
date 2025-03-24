@@ -1,15 +1,13 @@
 import UIKit
 import SpriteKit
 
-class VectorHandler: VectorHandlerProtocol {
-    
+final class VectorHandler: VectorHandlerProtocol {
     private let selectedVectorAlpha = 0.2
     private let defaultVectorAlpha = 1.0
     
     private var vectorToMove: VectorToMove?
     
     func tryHandleVectorTouch(pair: VectorNodePair, location: CGPoint) -> Bool {
-        
         let touchedNode = pair.node
         touchedNode.alpha = selectedVectorAlpha
         
@@ -58,8 +56,7 @@ class VectorHandler: VectorHandlerProtocol {
             start = vectorStart
             arrowHeadPoint = CGPoint(x: vectorToMove!.vector.endX + xDiff, y: vectorToMove!.vector.endY + yDiff)
             end = arrowHeadPoint
-        }
-        else {
+        } else {
             end = CGPoint(x: location.x, y: location.y)
             
             if (vectorToMove!.position == .start){
@@ -75,25 +72,21 @@ class VectorHandler: VectorHandlerProtocol {
         
         pathToDraw.move(to: start)
         pathToDraw.addLine(to: end)
-        
         pathToDraw.moveAndAddArrowHead(
             vectorStart: vectorStart,
             end: arrowHeadPoint,
             arrowLengthMultiplier: 0.12)
         
         vectorToMove?.node.path = pathToDraw
-        
         vectorToMove?.vector.changeCoordinates(
             startX: vectorStart.x,
             endX: arrowHeadPoint.x,
             startY: vectorStart.y,
             endY: arrowHeadPoint.y)
-        
         return true
     }
     
     func handleMoveEnded(){
-        
         if (vectorToMove?.position == nil) {
             return
         }
@@ -101,5 +94,4 @@ class VectorHandler: VectorHandlerProtocol {
         vectorToMove?.node.alpha = defaultVectorAlpha;
         vectorToMove = nil
     }
-    
 }

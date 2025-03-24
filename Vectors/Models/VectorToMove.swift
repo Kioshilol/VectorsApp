@@ -1,7 +1,6 @@
 import SpriteKit
 
-class VectorToMove{
-    
+final class VectorToMove{
     let node: SKShapeNode
     let position: VectorPosition
     let vector: VectorItemViewModel

@@ -1,7 +1,6 @@
 import SpriteKit
 
-class VectorNodePair{
-    
+final class VectorNodePair{
     let vector: VectorItemViewModel
     let node: SKShapeNode
     

@@ -3,7 +3,7 @@ import SpriteKit
 
 struct MainView: View {
     
-    private var vectorService: VectorServiceProtocol = CompositionRoot.shared.resolve(VectorServiceProtocol.self)
+    private lazy var vectorService: VectorServiceProtocol = CompositionRoot.shared.resolve(VectorServiceProtocol.self)
     
     @State private var menuVisible = false
     

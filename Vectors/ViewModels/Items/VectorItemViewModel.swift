@@ -1,14 +1,6 @@
-//
-//  Vector.swift
-//  Vectors
-//
-//  Created by paintmethecolorofchaos on 20.03.25.
-//
-
 import UIKit
 
 class VectorItemViewModel: ObservableObject, Identifiable{
-    
     @Published var name: String
     
     private(set) var startX: Double;
@@ -35,7 +27,7 @@ class VectorItemViewModel: ObservableObject, Identifiable{
         startX: Double,
         endX: Double,
         startY: Double,
-        endY: Double){
+        endY: Double) {
             self.startX = startX
             self.endX = endX
             self.startY = startY
