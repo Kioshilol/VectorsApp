@@ -3,23 +3,28 @@ import UIKit
 class VectorItemViewModel: ObservableObject, Identifiable{
     @Published var name: String
     
+    private(set) var uuid: UUID;
     private(set) var startX: Double;
     private(set) var endX: Double;
     private(set) var startY: Double;
     private(set) var endY: Double;
-    let color: UIColor;
+    private(set) var color: UIColor;
+    
     
     init(
+        uuid: UUID,
         startX: Double,
         endX: Double,
         startY: Double,
         endY: Double,
-        name: String) {
+        name: String,
+        color: UIColor = UIColor.yolo()) {
+            self.uuid = uuid
             self.startX = startX
             self.endX = endX
             self.startY = startY
             self.endY = endY
-            color = UIColor.yolo()
+            self.color = color
             self.name = name;
     }
     

@@ -3,7 +3,9 @@ import SpriteKit
 
 struct MainView: View {
     
-    private lazy var vectorService: VectorServiceProtocol = CompositionRoot.shared.resolve(VectorServiceProtocol.self)
+    private var vectorService: VectorServiceProtocol = CompositionRoot.shared.resolve(VectorServiceProtocol.self)
+    
+    @StateObject private var viewModel = MainViewModel();
     
     @State private var menuVisible = false
     
@@ -54,6 +56,8 @@ struct MainView: View {
     private func setupScene(){
         vectorsScene.size = CGSize(width: 500, height: 1000)
         vectorsScene.scaleMode = .fill
+        
+        vectorsScene.initializeVectors(vectors: viewModel.vectors)
     }
 }
 

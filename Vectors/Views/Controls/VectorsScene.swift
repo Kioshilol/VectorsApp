@@ -16,8 +16,6 @@ class VectorsScene : SKScene{
         camera = sceneCamera;
         
         backgroundColor = UIColor.systemBackground;
-        
-        drawVector(vector: VectorItemViewModel(startX: 0, endX: 200, startY: 0, endY: 0, name: "qwe"))
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -58,6 +56,12 @@ class VectorsScene : SKScene{
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         vectorHandler.handleMoveEnded()
+    }
+    
+    func initializeVectors(vectors: [VectorItemViewModel]) {
+        vectors.forEach({ vector in
+            drawVector(vector: vector)
+        })
     }
     
     func selectVector(id: ObjectIdentifier){

@@ -2,6 +2,8 @@ import UIKit
 import SpriteKit
 
 final class VectorHandler: VectorHandlerProtocol {
+    private var vectorManager: VectorManagerProtocol = CompositionRoot.shared.resolve(VectorManagerProtocol.self)
+    
     private let selectedVectorAlpha = 0.2
     private let defaultVectorAlpha = 1.0
     
@@ -87,9 +89,16 @@ final class VectorHandler: VectorHandlerProtocol {
     }
     
     func handleMoveEnded(){
-        if (vectorToMove?.position == nil) {
+        if (vectorToMove == nil) {
             return
         }
+        
+        vectorManager.updateVector(
+            uuid: vectorToMove!.vector.uuid,
+            startX: vectorToMove!.vector.startX,
+            endX: vectorToMove!.vector.endX,
+            startY: vectorToMove!.vector.startY,
+            endY: vectorToMove!.vector.endY)
         
         vectorToMove?.node.alpha = defaultVectorAlpha;
         vectorToMove = nil
