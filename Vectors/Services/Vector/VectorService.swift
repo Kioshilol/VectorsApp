@@ -1,10 +1,16 @@
 import Foundation
+
 final class VectorService: VectorServiceProtocol {
     private var vectorManager: VectorManagerProtocol = CompositionRoot.shared.resolve(VectorManagerProtocol.self)
     private var vectorFactory: VectorFactoryProtocol = CompositionRoot.shared.resolve(VectorFactoryProtocol.self)
     
     var vectors: [VectorItemViewModel] = []
     var vectorCreated: ((VectorItemViewModel) -> Void)?
+    
+    func requestRefreshVectors() {
+        let entities = vectorManager.fetchVectors()
+        vectors = vectorFactory.produceVectorItemViewModels(entities: entities)
+    }
     
     func createVector(
         startX: Double,
@@ -13,8 +19,7 @@ final class VectorService: VectorServiceProtocol {
         endY: Double,
         name: String) -> VectorItemViewModel {
             
-            var uuid = UUID()
-            
+            let uuid = UUID()
             let vector = vectorFactory.produceItemViewModel(
                 uuid: uuid,
                 startX: startX,
@@ -33,7 +38,6 @@ final class VectorService: VectorServiceProtocol {
                 endY: endY,
                 name: name,
                 color: vector.color)
-           
         return vector
     }
 }

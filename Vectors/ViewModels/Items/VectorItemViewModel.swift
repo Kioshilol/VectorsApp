@@ -1,7 +1,8 @@
 import UIKit
 
 class VectorItemViewModel: ObservableObject, Identifiable{
-    @Published var name: String
+    var name: String
+    var distance: String = "";
     
     private(set) var uuid: UUID;
     private(set) var startX: Double;
@@ -9,7 +10,6 @@ class VectorItemViewModel: ObservableObject, Identifiable{
     private(set) var startY: Double;
     private(set) var endY: Double;
     private(set) var color: UIColor;
-    
     
     init(
         uuid: UUID,
@@ -26,6 +26,7 @@ class VectorItemViewModel: ObservableObject, Identifiable{
             self.endY = endY
             self.color = color
             self.name = name;
+            setupDistance()
     }
     
     func changeCoordinates(
@@ -37,5 +38,12 @@ class VectorItemViewModel: ObservableObject, Identifiable{
             self.endX = endX
             self.startY = startY
             self.endY = endY
+            setupDistance()
         }
+    
+    func setupDistance(){
+        distance = String(hypotf(
+            Float(self.endX - self.startX),
+            Float(self.endY - self.startY)))
+    }
 }

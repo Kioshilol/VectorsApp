@@ -21,7 +21,7 @@ final class CompositionRoot{
             .inObjectScope(.container)
         container.register(VectorServiceProtocol.self) { _ in VectorService() }
             .inObjectScope(.container)
-        container.register(VectorHandlerProtocol.self) { _ in VectorHandler() }
+        container.register(VectorHelperProtocol.self) { _ in VectorHelper() }
             .inObjectScope(.container)
         container.register(VectorFactoryProtocol.self) { _ in VectorFactory() }
             .inObjectScope(.container)

@@ -1,13 +1,12 @@
 import SwiftUI
 
 struct AddVectorView: View {
-    
     @Environment(\.presentationMode) var presentationMode
     
     @StateObject private var viewModel = AddVectorViewModel();
     
     var body: some View {
-        VStack(spacing: 10){
+        VStack(spacing: 10) {
             
             Text("Enter name")
             TextField("0", text: $viewModel.name)
@@ -44,6 +43,7 @@ struct AddVectorView: View {
         }
     }
     
+    //TODO: dont like it IMRPOVE cus of i have no custom navigation i did it (move logic to viewmodel)
     func createButtonAction(){
         let isCreated = viewModel.tryCreateVector()
         if(!isCreated){

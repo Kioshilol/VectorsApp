@@ -31,7 +31,7 @@ extension SKShapeNode {
             
             let time = decreaseLineHeightAnimationDuration - elapsedTime
             let lineWidth = endLineHeight * time / decreaseLineHeightAnimationDuration
-            node.lineWidth =  lineWidth <= 0
+            node.lineWidth =  lineWidth <= startLineHeight
             ? startLineHeight
             : lineWidth
         }

@@ -1,20 +1,17 @@
 import SpriteKit
 import SwiftUI
 
-class VectorsScene : SKScene{
-    
+class VectorsScene : SKScene {
     private let defaultLineHeight = 3.0
     
-    private var vectorHandler: VectorHandlerProtocol = CompositionRoot.shared.resolve(VectorHandlerProtocol.self)
+    private var vectorHelper: VectorHelperProtocol = CompositionRoot.shared.resolve(VectorHelperProtocol.self)
     
     private var previousCameraPoint = CGPoint.zero
     private var sceneCamera = SKCameraNode()
     private var pairs = [VectorNodePair]()
     
     override func didMove(to view: SKView) {
-        
         camera = sceneCamera;
-        
         backgroundColor = UIColor.systemBackground;
     }
     
@@ -35,7 +32,7 @@ class VectorsScene : SKScene{
             return
         }
         
-        _ = vectorHandler.tryHandleVectorTouch(pair: selectedPair, location: location)
+        _ = vectorHelper.tryHandleVectorTouch(pair: selectedPair, location: location)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -46,7 +43,14 @@ class VectorsScene : SKScene{
         let location = touch.location(in: self)
         let previousLocation = touch.previousLocation(in: self)
         
-        if (vectorHandler.tryHandleVectorMove(location: location, previousLocation: previousLocation)) {
+//        let touchedNodes = nodes(at: location)
+//        if let touchedNode = touchedNodes.first(where: { $0 != vectorHelper.vectorToMove?.node }) as? SKShapeNode {
+//             if let selectedPair = pairs.first(where: { $0.node == touchedNode} ) {
+//                print(selectedPair.vector.startX)
+//            }
+//        }
+        
+        if (vectorHelper.tryHandleVectorMove(location: location, previousLocation: previousLocation)) {
             return
         }
 
@@ -55,7 +59,7 @@ class VectorsScene : SKScene{
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        vectorHandler.handleMoveEnded()
+        vectorHelper.handleMoveEnded()
     }
     
     func initializeVectors(vectors: [VectorItemViewModel]) {
@@ -64,17 +68,23 @@ class VectorsScene : SKScene{
         })
     }
     
-    func selectVector(id: ObjectIdentifier){
-        guard let selectedPair = pairs.first(where: { $0.vector.id == id} ) else {
+    func vectorAction(uuid: UUID, action: VectorAction) {
+        guard let selectedPair = pairs.first(where: { $0.vector.uuid == uuid} ) else {
             return
         }
         
-        selectedPair.node.scaleLineHeight(
-            duration: 1,
-            startLineHeight: defaultLineHeight,
-            endLineHeight: 6,
-            increaseLineHeightAnimationDuration: 0.5,
-            decreaseLineHeightAnimationDuration: 0.5)
+        if (action == .select) {
+            selectedPair.node.scaleLineHeight(
+                duration: 1,
+                startLineHeight: defaultLineHeight,
+                endLineHeight: 6,
+                increaseLineHeightAnimationDuration: 0.5,
+                decreaseLineHeightAnimationDuration: 0.5)
+            return
+        }
+        
+        selectedPair.node.removeFromParent()
+        pairs = pairs.filter({ $0.node != selectedPair.node })
     }
     
     func drawVector(vector: VectorItemViewModel){

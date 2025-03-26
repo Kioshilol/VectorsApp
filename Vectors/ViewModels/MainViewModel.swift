@@ -1,18 +1,12 @@
 import Foundation
 
-final class MainViewModel: ObservableObject {
-    
-    private var vectorManager: VectorManagerProtocol = CompositionRoot.shared.resolve(VectorManagerProtocol.self)
-    private var vectorFactory: VectorFactoryProtocol = CompositionRoot.shared.resolve(VectorFactoryProtocol.self)
+final class MainViewModel: BaseViewModel {
+    public var vectorService: VectorServiceProtocol = CompositionRoot.shared.resolve(VectorServiceProtocol.self)
     
     @Published var vectors: [VectorItemViewModel] = []
     
-    init(){
-        produceVectors()
-    }
-    
-    private func produceVectors(){
-        var entities = vectorManager.fetchVectors()
-        vectors = vectorFactory.produceVectorItemViewModels(entities: entities)
+    override func initialize() {
+        vectorService.requestRefreshVectors()
+        vectors = vectorService.vectors
     }
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-class AddVectorViewModel: ObservableObject{
+final class AddVectorViewModel: BaseViewModel {
     private let vectorService: VectorServiceProtocol = CompositionRoot.shared.resolve(VectorServiceProtocol.self)
     
     @Published var startX: String = "";
@@ -10,7 +10,7 @@ class AddVectorViewModel: ObservableObject{
     @Published var name: String = "";
     @Published var errorText: String = "";
     
-    init(){
+    override func initialize() {
         name = vectorService.vectors.count == 0
         ? "Unknown"
         : "Unknown \(vectorService.vectors.count)"

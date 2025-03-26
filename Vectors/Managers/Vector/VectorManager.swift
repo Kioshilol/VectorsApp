@@ -72,11 +72,26 @@ final class VectorManager: VectorManagerProtocol {
                 vector.startY = startY
                 vector.endY = endY
             }
+    
             
             saveContext()
     }
     
-    private func saveContext(){
+    func deleteVector(uuid: UUID) {
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: VectorEntity.self))
+        do {
+            guard let vectors = try? context.fetch(fetchRequest) as? [VectorEntity],
+                  let vector = vectors.first(where: {$0.uuid == uuid}) else {
+                return
+            }
+            
+            context.delete(vector)
+        }
+        
+        saveContext()
+    }
+    
+    private func saveContext() {
         let context = context
         if (context.hasChanges) {
             do {

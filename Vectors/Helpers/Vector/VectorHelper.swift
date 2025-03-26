@@ -1,13 +1,22 @@
 import UIKit
 import SpriteKit
 
-final class VectorHandler: VectorHandlerProtocol {
+final class VectorHelper: VectorHelperProtocol {
     private var vectorManager: VectorManagerProtocol = CompositionRoot.shared.resolve(VectorManagerProtocol.self)
     
     private let selectedVectorAlpha = 0.2
     private let defaultVectorAlpha = 1.0
+    private var minimalVerticalThreshold = 0.0
+    private var minimalHorizontalThreshold = 0.0
     
-    private var vectorToMove: VectorToMove?
+    private let userDefaults: UserDefaults
+    
+    var vectorToMove: VectorToMove?
+    
+    init() {
+        userDefaults = UserDefaults.standard
+        requestUpdateVectorSettings()
+    }
     
     func tryHandleVectorTouch(pair: VectorNodePair, location: CGPoint) -> Bool {
         let touchedNode = pair.node
@@ -48,7 +57,7 @@ final class VectorHandler: VectorHandlerProtocol {
         let start: CGPoint
         let arrowHeadPoint: CGPoint
         let vectorStart: CGPoint
-        let end: CGPoint
+        var end: CGPoint
         
         if (vectorToMove!.position == .center) {
             let xDiff = location.x - previousLocation.x
@@ -60,15 +69,18 @@ final class VectorHandler: VectorHandlerProtocol {
             end = arrowHeadPoint
         } else {
             end = CGPoint(x: location.x, y: location.y)
-            
             if (vectorToMove!.position == .start){
                 start = CGPoint(x: vectorToMove!.vector.endX, y: vectorToMove!.vector.endY)
-                arrowHeadPoint = CGPoint(x: vectorToMove!.vector.endX, y: vectorToMove!.vector.endY)
+                tryToSetVerticalPoint()
+                tryToSetHorizontalPoint()
                 vectorStart = end;
+                arrowHeadPoint = CGPoint(x: vectorToMove!.vector.endX, y: vectorToMove!.vector.endY)
             } else {
                 start = CGPoint(x: vectorToMove!.vector.startX, y: vectorToMove!.vector.startY)
-                arrowHeadPoint = end
                 vectorStart = start;
+                tryToSetVerticalPoint()
+                tryToSetHorizontalPoint()
+                arrowHeadPoint = end
             }
         }
         
@@ -86,6 +98,18 @@ final class VectorHandler: VectorHandlerProtocol {
             startY: vectorStart.y,
             endY: arrowHeadPoint.y)
         return true
+        
+        func tryToSetVerticalPoint() {
+            if (end.x >= start.x - minimalVerticalThreshold && end.x <= start.x + minimalVerticalThreshold){
+                end = CGPoint(x: start.x, y: end.y)
+            }
+        }
+        
+        func tryToSetHorizontalPoint() {
+            if (end.y >= start.y - minimalHorizontalThreshold && end.y <= start.y + minimalHorizontalThreshold){
+                end = CGPoint(x: end.x, y: start.y)
+            }
+        }
     }
     
     func handleMoveEnded(){
@@ -102,5 +126,12 @@ final class VectorHandler: VectorHandlerProtocol {
         
         vectorToMove?.node.alpha = defaultVectorAlpha;
         vectorToMove = nil
+    }
+    
+    func requestUpdateVectorSettings() {
+        minimalVerticalThreshold = userDefaults.value(
+            forKey: Constants.UserDefaultKeys.minimalVerticalThresholdKey) as? CGFloat ?? 0
+        minimalHorizontalThreshold = userDefaults.value(
+            forKey: Constants.UserDefaultKeys.minimalHorizontalThresholdKey) as? CGFloat ?? 0
     }
 }
