@@ -5,6 +5,7 @@ final class SettingsViewModel: BaseViewModel {
     
     @Published var minimalHorizontalThreshold: String = "";
     @Published var minimalVerticalThreshold: String = "";
+    @Published var minimalStickThreshold: String = "";
     @Published var errorText: String = "";
     
     private let userDefaults: UserDefaults = UserDefaults.standard
@@ -14,6 +15,8 @@ final class SettingsViewModel: BaseViewModel {
             forKey: Constants.UserDefaultKeys.minimalVerticalThresholdKey) as? Int ?? 0)
         minimalHorizontalThreshold = String(describing: userDefaults.value(
             forKey: Constants.UserDefaultKeys.minimalHorizontalThresholdKey) as? Int ?? 0)
+        minimalStickThreshold = String(describing: userDefaults.value(
+            forKey: Constants.UserDefaultKeys.minimalStickThresholdKey) as? Int ?? 0)
     }
     
     func trySaveSettings() -> Bool {
@@ -29,16 +32,25 @@ final class SettingsViewModel: BaseViewModel {
             return false
         }
         
+        guard let minimalStickThresholdValue = Double(minimalStickThreshold) else {
+            errorText = "Wrong minimal stick threshold"
+            return false
+        }
+        
         let userDefault = UserDefaults.standard
         userDefault.set(
             minimalHorizontalThresholdValue,
-            forKey: String(Constants.UserDefaultKeys.minimalHorizontalThresholdKey))
+            forKey: Constants.UserDefaultKeys.minimalHorizontalThresholdKey)
         
         userDefault.set(
             minimalVerticalThresholdValue,
-            forKey: String(Constants.UserDefaultKeys.minimalVerticalThresholdKey))
+            forKey: Constants.UserDefaultKeys.minimalVerticalThresholdKey)
         
-        //i did it becouse dont fetch minimal values from userdefault everytime when user move vector
+        userDefault.set(
+            minimalStickThresholdValue,
+            forKey: Constants.UserDefaultKeys.minimalStickThresholdKey)
+        
+        //TODO: imrpove, i did it becouse dont fetch minimal values from userdefault everytime when user move vector
         vectorHandler.requestUpdateVectorSettings()
         
         return true

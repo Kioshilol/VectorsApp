@@ -20,6 +20,12 @@ struct SettingsView: View {
                 .frame(width: 100, height: nil, alignment: .center)
                 .padding(.bottom)
             
+            Text("Enter minimal stick threshold")
+            TextField("0", text: $viewModel.minimalStickThreshold)
+                .keyboardType(.numberPad)
+                .frame(width: 100, height: nil, alignment: .center)
+                .padding(.bottom)
+            
             Button(action : saveSettings){
                     Text("Save")
                 }

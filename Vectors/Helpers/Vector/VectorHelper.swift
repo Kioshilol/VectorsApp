@@ -8,6 +8,7 @@ final class VectorHelper: VectorHelperProtocol {
     private let defaultVectorAlpha = 1.0
     private var minimalVerticalThreshold = 0.0
     private var minimalHorizontalThreshold = 0.0
+    private var minimalStickThreshold = 0.0
     
     private let userDefaults: UserDefaults
     
@@ -47,7 +48,7 @@ final class VectorHelper: VectorHelperProtocol {
         return true
     }
     
-    func tryHandleVectorMove(location: CGPoint, previousLocation: CGPoint) -> Bool {
+    func tryHandleVectorMove(location: CGPoint, previousLocation: CGPoint, vectorToStick: VectorToStick? = nil) -> Bool {
         guard (vectorToMove != nil) else{
             return false
         }
@@ -68,18 +69,27 @@ final class VectorHelper: VectorHelperProtocol {
             arrowHeadPoint = CGPoint(x: vectorToMove!.vector.endX + xDiff, y: vectorToMove!.vector.endY + yDiff)
             end = arrowHeadPoint
         } else {
+            
             end = CGPoint(x: location.x, y: location.y)
             if (vectorToMove!.position == .start){
                 start = CGPoint(x: vectorToMove!.vector.endX, y: vectorToMove!.vector.endY)
-                tryToSetVerticalPoint()
-                tryToSetHorizontalPoint()
+                
+                if (!tryStickVector()) {
+                    tryToSetVerticalPoint()
+                    tryToSetHorizontalPoint()
+                }
+            
                 vectorStart = end;
                 arrowHeadPoint = CGPoint(x: vectorToMove!.vector.endX, y: vectorToMove!.vector.endY)
             } else {
                 start = CGPoint(x: vectorToMove!.vector.startX, y: vectorToMove!.vector.startY)
                 vectorStart = start;
-                tryToSetVerticalPoint()
-                tryToSetHorizontalPoint()
+                
+                if (!tryStickVector()) {
+                    tryToSetVerticalPoint()
+                    tryToSetHorizontalPoint()
+                }
+               
                 arrowHeadPoint = end
             }
         }
@@ -110,9 +120,26 @@ final class VectorHelper: VectorHelperProtocol {
                 end = CGPoint(x: end.x, y: start.y)
             }
         }
+        
+        func tryStickVector() -> Bool {
+            if (vectorToStick == nil) {
+                return false
+            }
+            
+            switch vectorToStick!.stickPosition {
+            case .start:
+                end = CGPoint(x: vectorToStick!.vector.startX, y: vectorToStick!.vector.startY)
+            case .center:
+                break
+            case .end:
+                end = CGPoint(x: vectorToStick!.vector.endX, y: vectorToStick!.vector.endY)
+            }
+            
+            return false
+        }
     }
     
-    func handleMoveEnded(){
+    func handleMoveEnded() {
         if (vectorToMove == nil) {
             return
         }
@@ -133,5 +160,25 @@ final class VectorHelper: VectorHelperProtocol {
             forKey: Constants.UserDefaultKeys.minimalVerticalThresholdKey) as? CGFloat ?? 0
         minimalHorizontalThreshold = userDefaults.value(
             forKey: Constants.UserDefaultKeys.minimalHorizontalThresholdKey) as? CGFloat ?? 0
+        minimalStickThreshold = userDefaults.value(
+            forKey: Constants.UserDefaultKeys.minimalStickThresholdKey) as? CGFloat ?? 0
+    }
+    
+    func tryToStick(pair: VectorNodePair, location: CGPoint) -> VectorPosition? {
+        let distanceToStart = hypotf(
+            Float(location.x - pair.vector.startX),
+            Float(location.y - pair.vector.startY))
+        if (CGFloat(abs(distanceToStart)) <= minimalStickThreshold) {
+            return .start
+        }
+        
+        let distanceToEnd = hypotf(
+            Float(location.x - pair.vector.endX),
+            Float(location.y - pair.vector.endY))
+        if (CGFloat(abs(distanceToEnd)) <= minimalStickThreshold) {
+            return .end
+        }
+        
+        return nil
     }
 }

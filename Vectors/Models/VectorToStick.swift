@@ -1,8 +1,8 @@
 import SpriteKit
 
-final class VectorToMove {
+final class VectorToStick {
     let node: SKShapeNode
-    let position: VectorPosition
+    let stickPosition: VectorPosition
     let vector: VectorItemViewModel
     
     init(
@@ -10,7 +10,7 @@ final class VectorToMove {
         position: VectorPosition,
         vector: VectorItemViewModel){
             self.node = node
-            self.position = position
+            self.stickPosition = position
             self.vector = vector
         }
 }

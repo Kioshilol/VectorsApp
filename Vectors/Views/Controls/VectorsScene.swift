@@ -48,15 +48,29 @@ class VectorsScene : SKScene {
         let location = touch.location(in: self)
         let previousLocation = touch.previousLocation(in: self)
         
-//        let touchedNodes = nodes(at: location)
-//        if let touchedNode = touchedNodes.first(where: { $0 != vectorHelper.vectorToMove?.node }) as? SKShapeNode {
-//             if let selectedPair = pairs.first(where: { $0.node == touchedNode} ) {
-//                print(selectedPair.vector.startX)
-//            }
-//        }
+        
         
         if (longPressInProgress) {
-            if (vectorHelper.tryHandleVectorMove(location: location, previousLocation: previousLocation)) {
+            var vectorToStick: VectorToStick?
+            
+            //TODO: improve, dont like this
+            for pair in pairs {
+                if (pair.node == vectorHelper.vectorToMove?.node) {
+                    continue
+                }
+                
+                if let stickPosition = vectorHelper.tryToStick(pair: pair, location: location) {
+                    vectorToStick = VectorToStick(
+                        node: pair.node,
+                        position: stickPosition,
+                        vector: pair.vector)
+                }
+            }
+            
+            if (vectorHelper.tryHandleVectorMove(
+                location: location,
+                previousLocation: previousLocation,
+                vectorToStick: vectorToStick)) {
                 return
             }
         }
@@ -72,7 +86,7 @@ class VectorsScene : SKScene {
             longPressTimer?.invalidate()
             return
         }
-        
+       
         vectorHelper.handleMoveEnded()
         longPressInProgress = false
     }
