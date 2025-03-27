@@ -10,13 +10,15 @@ class VectorsScene : SKScene {
     private var sceneCamera = SKCameraNode()
     private var pairs = [VectorNodePair]()
     
+    var longPressTimer: Timer? = nil
+    var longPressInProgress: Bool = false
+    
     override func didMove(to view: SKView) {
         camera = sceneCamera;
         backgroundColor = UIColor.systemBackground;
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
         guard let touch = touches.first else {
             return
         }
@@ -32,7 +34,10 @@ class VectorsScene : SKScene {
             return
         }
         
-        _ = vectorHelper.tryHandleVectorTouch(pair: selectedPair, location: location)
+        longPressTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false, block: { (timer) in
+            self.longPressInProgress = true
+            _ = self.vectorHelper.tryHandleVectorTouch(pair: selectedPair, location: location)
+        })
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -50,16 +55,26 @@ class VectorsScene : SKScene {
 //            }
 //        }
         
-        if (vectorHelper.tryHandleVectorMove(location: location, previousLocation: previousLocation)) {
-            return
+        if (longPressInProgress) {
+            if (vectorHelper.tryHandleVectorMove(location: location, previousLocation: previousLocation)) {
+                return
+            }
         }
+        
+        longPressTimer?.invalidate()
 
         camera?.position.x += -(location.x - previousLocation.x)
         camera?.position.y += -(location.y - previousLocation.y)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if (!longPressInProgress){
+            longPressTimer?.invalidate()
+            return
+        }
+        
         vectorHelper.handleMoveEnded()
+        longPressInProgress = false
     }
     
     func initializeVectors(vectors: [VectorItemViewModel]) {
