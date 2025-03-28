@@ -3,52 +3,64 @@ import Foundation
 final class SettingsViewModel: BaseViewModel {
     private var vectorHandler: VectorHelperProtocol = CompositionRoot.shared.resolve(VectorHelperProtocol.self)
     
-    @Published var minimalHorizontalThreshold: String = "";
-    @Published var minimalVerticalThreshold: String = "";
-    @Published var minimalStickThreshold: String = "";
+    @Published var horizontalThreshold: String = "";
+    @Published var verticalThreshold: String = "";
+    @Published var stickThreshold: String = "";
+    @Published var rightAngleThreshold: String = "";
     @Published var errorText: String = "";
     
     private let userDefaults: UserDefaults = UserDefaults.standard
     
     override func initialize() {
-        minimalVerticalThreshold = String(describing: userDefaults.value(
-            forKey: Constants.UserDefaultKeys.minimalVerticalThresholdKey) as? Int ?? 0)
-        minimalHorizontalThreshold = String(describing: userDefaults.value(
-            forKey: Constants.UserDefaultKeys.minimalHorizontalThresholdKey) as? Int ?? 0)
-        minimalStickThreshold = String(describing: userDefaults.value(
-            forKey: Constants.UserDefaultKeys.minimalStickThresholdKey) as? Int ?? 0)
+        verticalThreshold = String(describing: userDefaults.value(
+            forKey: Constants.UserDefaultKeys.verticalThresholdKey) as? Int ?? 0)
+        horizontalThreshold = String(describing: userDefaults.value(
+            forKey: Constants.UserDefaultKeys.horizontalThresholdKey) as? Int ?? 0)
+        stickThreshold = String(describing: userDefaults.value(
+            forKey: Constants.UserDefaultKeys.stickThresholdKey) as? Int ?? 0)
+        rightAngleThreshold = String(describing: userDefaults.value(
+            forKey: Constants.UserDefaultKeys.rightAngleThresholdKey) as? Int ?? 0)
     }
     
     func trySaveSettings() -> Bool {
         errorText = ""
         
-        guard let minimalHorizontalThresholdValue = Double(minimalHorizontalThreshold) else {
-            errorText = "Wrong minimal horizontal threshold"
+        guard let horizontalThresholdValue = Double(horizontalThreshold) else {
+            errorText = "Wrong horizontal threshold"
             return false
         }
         
-        guard let minimalVerticalThresholdValue = Double(minimalVerticalThreshold) else {
-            errorText = "Wrong minimal vertical threshold"
+        guard let verticalThresholdValue = Double(verticalThreshold) else {
+            errorText = "Wrong vertical threshold"
             return false
         }
         
-        guard let minimalStickThresholdValue = Double(minimalStickThreshold) else {
-            errorText = "Wrong minimal stick threshold"
+        guard let stickThresholdValue = Double(stickThreshold) else {
+            errorText = "Wrong stick threshold"
+            return false
+        }
+        
+        guard let rightAngleThresholdValue = Double(rightAngleThreshold) else {
+            errorText = "Wrong right angle threshold"
             return false
         }
         
         let userDefault = UserDefaults.standard
         userDefault.set(
-            minimalHorizontalThresholdValue,
-            forKey: Constants.UserDefaultKeys.minimalHorizontalThresholdKey)
+            horizontalThresholdValue,
+            forKey: Constants.UserDefaultKeys.horizontalThresholdKey)
         
         userDefault.set(
-            minimalVerticalThresholdValue,
-            forKey: Constants.UserDefaultKeys.minimalVerticalThresholdKey)
+            verticalThresholdValue,
+            forKey: Constants.UserDefaultKeys.verticalThresholdKey)
         
         userDefault.set(
-            minimalStickThresholdValue,
-            forKey: Constants.UserDefaultKeys.minimalStickThresholdKey)
+            stickThresholdValue,
+            forKey: Constants.UserDefaultKeys.stickThresholdKey)
+        
+        userDefault.set(
+            rightAngleThresholdValue,
+            forKey: Constants.UserDefaultKeys.rightAngleThresholdKey)
         
         //TODO: imrpove, i did it becouse dont fetch minimal values from userdefault everytime when user move vector
         vectorHandler.requestUpdateVectorSettings()

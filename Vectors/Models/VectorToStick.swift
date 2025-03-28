@@ -1,15 +1,15 @@
 import SpriteKit
 
 final class VectorToStick {
-    let node: SKShapeNode
+    let stickedVectorPosition: VectorPosition
     let stickPosition: VectorPosition
     let vector: VectorItemViewModel
     
     init(
-        node: SKShapeNode,
+        stickedVectorPosition: VectorPosition,
         position: VectorPosition,
-        vector: VectorItemViewModel){
-            self.node = node
+        vector: VectorItemViewModel) {
+            self.stickedVectorPosition = stickedVectorPosition
             self.stickPosition = position
             self.vector = vector
         }

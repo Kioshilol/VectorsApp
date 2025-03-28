@@ -8,20 +8,26 @@ struct SettingsView: View {
     var body: some View {
         VStack(spacing: 10){
             
-            Text("Enter minimal horizontal threshold")
-            TextField("0", text: $viewModel.minimalHorizontalThreshold)
+            Text("Enter horizontal threshold")
+            TextField("0", text: $viewModel.horizontalThreshold)
                 .keyboardType(.numberPad)
                 .frame(width: 100, height: nil, alignment: .center)
                 .padding(.bottom)
             
-            Text("Enter minimal vertical threshold")
-            TextField("0", text: $viewModel.minimalVerticalThreshold)
+            Text("Enter vertical threshold")
+            TextField("0", text: $viewModel.verticalThreshold)
                 .keyboardType(.numberPad)
                 .frame(width: 100, height: nil, alignment: .center)
                 .padding(.bottom)
             
-            Text("Enter minimal stick threshold")
-            TextField("0", text: $viewModel.minimalStickThreshold)
+            Text("Enter stick threshold")
+            TextField("0", text: $viewModel.stickThreshold)
+                .keyboardType(.numberPad)
+                .frame(width: 100, height: nil, alignment: .center)
+                .padding(.bottom)
+            
+            Text("Enter right angle threshold")
+            TextField("0", text: $viewModel.rightAngleThreshold)
                 .keyboardType(.numberPad)
                 .frame(width: 100, height: nil, alignment: .center)
                 .padding(.bottom)

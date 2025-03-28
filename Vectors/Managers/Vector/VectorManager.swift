@@ -56,10 +56,7 @@ final class VectorManager: VectorManagerProtocol {
     
     func updateVector(
         uuid: UUID,
-        startX: Double,
-        endX: Double,
-        startY: Double,
-        endY: Double) {
+        updateAction: ((VectorEntity) -> Void)?) {
             let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: String(describing: VectorEntity.self))
             do {
                 guard let vectors = try? context.fetch(fetchRequest) as? [VectorEntity],
@@ -67,10 +64,7 @@ final class VectorManager: VectorManagerProtocol {
                     return
                 }
                 
-                vector.startX = startX
-                vector.endX = endX
-                vector.startY = startY
-                vector.endY = endY
+                updateAction?(vector)
             }
     
             

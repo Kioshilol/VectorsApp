@@ -3,6 +3,7 @@ import UIKit
 class VectorItemViewModel: ObservableObject, Identifiable{
     var name: String
     var distance: String = "";
+    var stickedVector: VectorToStick? = nil
     
     private(set) var uuid: UUID;
     private(set) var startX: Double;

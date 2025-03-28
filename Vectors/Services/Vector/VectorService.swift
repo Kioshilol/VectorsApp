@@ -18,7 +18,6 @@ final class VectorService: VectorServiceProtocol {
         startY: Double,
         endY: Double,
         name: String) -> VectorItemViewModel {
-            
             let uuid = UUID()
             let vector = vectorFactory.produceItemViewModel(
                 uuid: uuid,

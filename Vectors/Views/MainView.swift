@@ -13,13 +13,13 @@ struct MainView: View {
         
             GeometryReader{ geometry in
                 
-                SpriteView(scene: vectorsScene);
+                SpriteView(scene: vectorsScene)
                 
                 SideMenuView(
                     isShow: $menuVisible,
                     vectorAction: vectorsScene.vectorAction)
                 
-                NavigationLink(destination: AddVectorView()){
+                NavigationLink(destination: AddVectorView()) {
                     
                     Image(systemName: "plus")
                         .resizable()

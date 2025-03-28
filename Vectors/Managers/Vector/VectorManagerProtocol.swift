@@ -5,7 +5,7 @@ protocol VectorManagerProtocol {
     
     func fetchVectors() -> [VectorEntity]
     
-    func updateVector(uuid: UUID, startX: Double, endX: Double, startY: Double, endY: Double)
+    func updateVector(uuid: UUID, updateAction: ((VectorEntity) -> Void)?)
     
     func deleteVector(uuid: UUID)
 }

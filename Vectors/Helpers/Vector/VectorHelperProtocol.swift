@@ -11,5 +11,5 @@ protocol VectorHelperProtocol {
     
     func requestUpdateVectorSettings()
     
-    func tryToStick(pair: VectorNodePair, location: CGPoint) -> VectorPosition?
+    func tryToStick(pair: VectorNodePair, location: CGPoint) -> VectorPosition
 }

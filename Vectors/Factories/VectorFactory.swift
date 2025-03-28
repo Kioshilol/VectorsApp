@@ -1,7 +1,19 @@
 import Foundation
 final class VectorFactory: VectorFactoryProtocol{
     func produceVectorItemViewModels(entities: [VectorEntity]) -> [VectorItemViewModel] {
-        return entities.map(produceItemViewModel)
+        return entities.map(produceItemViewModelInternal)
+        
+        func produceItemViewModelInternal(entity: VectorEntity) -> VectorItemViewModel {
+            let vector = produceItemViewModel(entity: entity)
+            if let existingStickEntity = entities.first(where: { $0.uuid == entity.stickedVectorUuid }) {
+                vector.stickedVector = VectorToStick(
+                    stickedVectorPosition: VectorPosition(rawValue: existingStickEntity.stickedVectorPosition) ?? .none,
+                    position: VectorPosition(rawValue: existingStickEntity.stickedPosition) ?? .none,
+                    vector: produceItemViewModel(entity: existingStickEntity))
+            }
+           
+            return vector
+        }
     }
     
     func produceItemViewModel(entity: VectorEntity) -> VectorItemViewModel {
@@ -15,6 +27,7 @@ final class VectorFactory: VectorFactoryProtocol{
             color: entity.color)
         return vector
     }
+
     
     func produceItemViewModel(
         uuid: UUID,

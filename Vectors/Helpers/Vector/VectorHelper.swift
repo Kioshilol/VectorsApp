@@ -6,9 +6,10 @@ final class VectorHelper: VectorHelperProtocol {
     
     private let selectedVectorAlpha = 0.2
     private let defaultVectorAlpha = 1.0
-    private var minimalVerticalThreshold = 0.0
-    private var minimalHorizontalThreshold = 0.0
-    private var minimalStickThreshold = 0.0
+    private var verticalThreshold = 0.0
+    private var horizontalThreshold = 0.0
+    private var stickThreshold = 0.0
+    private var rightAngleThreshold = 0.0
     
     private let userDefaults: UserDefaults
     
@@ -48,6 +49,7 @@ final class VectorHelper: VectorHelperProtocol {
         return true
     }
     
+    //TODO: refactor calculations
     func tryHandleVectorMove(location: CGPoint, previousLocation: CGPoint, vectorToStick: VectorToStick? = nil) -> Bool {
         guard (vectorToMove != nil) else{
             return false
@@ -69,14 +71,36 @@ final class VectorHelper: VectorHelperProtocol {
             arrowHeadPoint = CGPoint(x: vectorToMove!.vector.endX + xDiff, y: vectorToMove!.vector.endY + yDiff)
             end = arrowHeadPoint
         } else {
-            
             end = CGPoint(x: location.x, y: location.y)
-            if (vectorToMove!.position == .start){
+            if (vectorToMove!.position == .start) {
                 start = CGPoint(x: vectorToMove!.vector.endX, y: vectorToMove!.vector.endY)
                 
-                if (!tryStickVector()) {
-                    tryToSetVerticalPoint()
-                    tryToSetHorizontalPoint()
+                if (!tryToCreateRightAngle(position: .start)) {
+                    if (!tryStickVector()) {
+                        
+                        if (vectorToMove?.vector.stickedVector?.stickedVectorPosition == .start){
+                            vectorToMove?.vector.stickedVector?.vector.stickedVector = nil
+                            vectorToMove?.vector.stickedVector = nil
+                        }
+                        
+                        tryToSetVerticalPoint()
+                        tryToSetHorizontalPoint()
+                    }
+                }
+                else {
+                    let dx = vectorToMove!.vector.stickedVector!.vector.endX - vectorToMove!.vector.stickedVector!.vector.startX
+                    let dy = vectorToMove!.vector.stickedVector!.vector.endY - vectorToMove!.vector.stickedVector!.vector.startY
+                    
+                    if (vectorToMove!.vector.stickedVector!.stickPosition == .start){
+                        end = CGPoint(
+                            x: vectorToMove!.vector.stickedVector!.vector.startX + dy,
+                            y: vectorToMove!.vector.stickedVector!.vector.startY - dx)
+                    }
+                    else {
+                        end = CGPoint(
+                            x: vectorToMove!.vector.stickedVector!.vector.endX + dy,
+                            y: vectorToMove!.vector.stickedVector!.vector.endY - dx)
+                    }
                 }
             
                 vectorStart = end;
@@ -85,9 +109,32 @@ final class VectorHelper: VectorHelperProtocol {
                 start = CGPoint(x: vectorToMove!.vector.startX, y: vectorToMove!.vector.startY)
                 vectorStart = start;
                 
-                if (!tryStickVector()) {
-                    tryToSetVerticalPoint()
-                    tryToSetHorizontalPoint()
+                if (!tryToCreateRightAngle(position: .end)) {
+                    if (!tryStickVector()) {
+                        if (vectorToMove?.vector.stickedVector?.stickedVectorPosition == .end) {
+                            vectorToMove?.vector.stickedVector?.vector.stickedVector = nil
+                            vectorToMove?.vector.stickedVector = nil
+                        }
+                        
+                        tryToSetVerticalPoint()
+                        tryToSetHorizontalPoint()
+                    }
+                }
+                else {
+                    let dx = vectorToMove!.vector.stickedVector!.vector.endX - vectorToMove!.vector.stickedVector!.vector.startX
+                    let dy = vectorToMove!.vector.stickedVector!.vector.endY - vectorToMove!.vector.stickedVector!.vector.startY
+                    
+                    if (vectorToMove!.vector.stickedVector!.stickPosition == .start) {
+                        end = CGPoint(
+                            x: vectorToMove!.vector.stickedVector!.vector.startX + dy,
+                            y: vectorToMove!.vector.stickedVector!.vector.startY - dx)
+                    }
+                    else {
+                        end = CGPoint(
+                            x: vectorToMove!.vector.stickedVector!.vector.endX + dy,
+                            y: vectorToMove!.vector.stickedVector!.vector.endY - dx)
+                    }
+                   
                 }
                
                 arrowHeadPoint = end
@@ -109,14 +156,56 @@ final class VectorHelper: VectorHelperProtocol {
             endY: arrowHeadPoint.y)
         return true
         
+        func tryToCreateRightAngle(position: VectorPosition) -> Bool {
+            if (vectorToMove!.vector.stickedVector == nil) {
+                return false
+            }
+            
+            if (vectorToMove!.vector.stickedVector!.stickedVectorPosition == vectorToMove!.position) {
+                return false
+            }
+            
+            let vector1 = CGVector(
+                dx: vectorToMove!.vector.stickedVector!.vector.endX - vectorToMove!.vector.stickedVector!.vector.startX,
+                dy: vectorToMove!.vector.stickedVector!.vector.endY - vectorToMove!.vector.stickedVector!.vector.startY)
+            
+            var vector2: CGVector
+            if (position == .start){
+                vector2 = CGVector(
+                    dx: location.x - vectorToMove!.vector.endX,
+                    dy: location.y - vectorToMove!.vector.endY)
+            } else {
+                vector2 = CGVector(
+                    dx: location.x - vectorToMove!.vector.startX,
+                    dy: location.y - vectorToMove!.vector.startY)
+            }
+            
+            let dotProduct = vector1.dx * vector2.dx + vector1.dy * vector2.dy
+            
+            let magnitude1 = sqrt(vector1.dx * vector1.dx + vector1.dy * vector1.dy)
+            let magnitude2 = sqrt(vector2.dx * vector2.dx + vector2.dy * vector2.dy)
+            
+            let cosineTheta = dotProduct / (magnitude1 * magnitude2)
+            var angle = acos(cosineTheta)
+            angle = angle * 180 / .pi
+            
+            print(angle)
+            
+            if (angle >= 90 - rightAngleThreshold && angle <= 90 + rightAngleThreshold) {
+                return true
+            }
+            
+            return false
+        }
+            
         func tryToSetVerticalPoint() {
-            if (end.x >= start.x - minimalVerticalThreshold && end.x <= start.x + minimalVerticalThreshold){
+            if (end.x >= start.x - verticalThreshold && end.x <= start.x + verticalThreshold){
                 end = CGPoint(x: start.x, y: end.y)
             }
         }
         
         func tryToSetHorizontalPoint() {
-            if (end.y >= start.y - minimalHorizontalThreshold && end.y <= start.y + minimalHorizontalThreshold){
+            if (end.y >= start.y - horizontalThreshold && end.y <= start.y + horizontalThreshold){
                 end = CGPoint(x: end.x, y: start.y)
             }
         }
@@ -133,52 +222,105 @@ final class VectorHelper: VectorHelperProtocol {
                 break
             case .end:
                 end = CGPoint(x: vectorToStick!.vector.endX, y: vectorToStick!.vector.endY)
+                vectorToMove?.vector.stickedVector = vectorToStick
+            case .none:
+                break
             }
             
-            return false
+            vectorToMove!.vector.stickedVector = vectorToStick
+            vectorToStick!.vector.stickedVector = VectorToStick(
+                stickedVectorPosition: vectorToStick!.stickPosition,
+                position: vectorToMove!.position,
+                vector: vectorToMove!.vector)
+            
+            return true
         }
     }
     
+    //TODO: refactor update vector
     func handleMoveEnded() {
         if (vectorToMove == nil) {
             return
         }
         
+        var cachedStickedVectorUuid: UUID?
         vectorManager.updateVector(
             uuid: vectorToMove!.vector.uuid,
-            startX: vectorToMove!.vector.startX,
-            endX: vectorToMove!.vector.endX,
-            startY: vectorToMove!.vector.startY,
-            endY: vectorToMove!.vector.endY)
+            updateAction: { vector in
+                vector.startX = self.vectorToMove!.vector.startX
+                vector.endX = self.vectorToMove!.vector.endX
+                vector.startY = self.vectorToMove!.vector.startY
+                vector.endY = self.vectorToMove!.vector.endY
+                
+                if (self.vectorToMove!.vector.stickedVector != nil) {
+                    vector.stickedPosition = self.vectorToMove!.vector.stickedVector!.stickedVectorPosition.rawValue
+                    vector.stickedVectorPosition = self.vectorToMove!.vector.stickedVector!.stickPosition.rawValue
+                    vector.stickedVectorUuid = self.vectorToMove!.vector.stickedVector!.vector.uuid
+                }
+                else {
+                    cachedStickedVectorUuid = vector.stickedVectorUuid
+                    vector.stickedPosition = 0
+                    vector.stickedVectorPosition = 0
+                    vector.stickedVectorUuid = nil
+                }
+            })
+        
+        if (vectorToMove!.vector.stickedVector != nil) {
+            vectorManager.updateVector(
+                uuid: vectorToMove!.vector.stickedVector!.vector.uuid,
+                updateAction: { vector in
+                    vector.startX = self.vectorToMove!.vector.stickedVector!.vector.startX
+                    vector.endX = self.vectorToMove!.vector.stickedVector!.vector.endX
+                    vector.startY = self.vectorToMove!.vector.stickedVector!.vector.startY
+                    vector.endY = self.vectorToMove!.vector.stickedVector!.vector.endY
+                    
+                    vector.stickedPosition = self.vectorToMove!.vector.stickedVector!.stickPosition.rawValue
+                    vector.stickedVectorPosition = self.vectorToMove!.vector.stickedVector!.stickedVectorPosition.rawValue
+                    vector.stickedVectorUuid = self.vectorToMove!.vector.uuid
+                })
+        }
+        else {
+            if (cachedStickedVectorUuid != nil) {
+                vectorManager.updateVector(
+                    uuid: cachedStickedVectorUuid!,
+                    updateAction: { vector in
+                        vector.stickedPosition = 0
+                        vector.stickedVectorPosition = 0
+                        vector.stickedVectorUuid = nil
+                    })
+            }
+        }
         
         vectorToMove?.node.alpha = defaultVectorAlpha;
         vectorToMove = nil
     }
     
     func requestUpdateVectorSettings() {
-        minimalVerticalThreshold = userDefaults.value(
-            forKey: Constants.UserDefaultKeys.minimalVerticalThresholdKey) as? CGFloat ?? 0
-        minimalHorizontalThreshold = userDefaults.value(
-            forKey: Constants.UserDefaultKeys.minimalHorizontalThresholdKey) as? CGFloat ?? 0
-        minimalStickThreshold = userDefaults.value(
-            forKey: Constants.UserDefaultKeys.minimalStickThresholdKey) as? CGFloat ?? 0
+        verticalThreshold = userDefaults.value(
+            forKey: Constants.UserDefaultKeys.verticalThresholdKey) as? CGFloat ?? 0
+        horizontalThreshold = userDefaults.value(
+            forKey: Constants.UserDefaultKeys.horizontalThresholdKey) as? CGFloat ?? 0
+        stickThreshold = userDefaults.value(
+            forKey: Constants.UserDefaultKeys.stickThresholdKey) as? CGFloat ?? 0
+        rightAngleThreshold = userDefaults.value(
+            forKey: Constants.UserDefaultKeys.rightAngleThresholdKey) as? CGFloat ?? 0
     }
     
-    func tryToStick(pair: VectorNodePair, location: CGPoint) -> VectorPosition? {
+    func tryToStick(pair: VectorNodePair, location: CGPoint) -> VectorPosition {
         let distanceToStart = hypotf(
             Float(location.x - pair.vector.startX),
             Float(location.y - pair.vector.startY))
-        if (CGFloat(abs(distanceToStart)) <= minimalStickThreshold) {
+        if (CGFloat(abs(distanceToStart)) <= stickThreshold) {
             return .start
         }
         
         let distanceToEnd = hypotf(
             Float(location.x - pair.vector.endX),
             Float(location.y - pair.vector.endY))
-        if (CGFloat(abs(distanceToEnd)) <= minimalStickThreshold) {
+        if (CGFloat(abs(distanceToEnd)) <= stickThreshold) {
             return .end
         }
         
-        return nil
+        return .none
     }
 }

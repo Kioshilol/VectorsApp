@@ -48,8 +48,6 @@ class VectorsScene : SKScene {
         let location = touch.location(in: self)
         let previousLocation = touch.previousLocation(in: self)
         
-        
-        
         if (longPressInProgress) {
             var vectorToStick: VectorToStick?
             
@@ -59,9 +57,10 @@ class VectorsScene : SKScene {
                     continue
                 }
                 
-                if let stickPosition = vectorHelper.tryToStick(pair: pair, location: location) {
+                let stickPosition = vectorHelper.tryToStick(pair: pair, location: location)
+                if (stickPosition != .none) {
                     vectorToStick = VectorToStick(
-                        node: pair.node,
+                        stickedVectorPosition: vectorHelper.vectorToMove!.position,
                         position: stickPosition,
                         vector: pair.vector)
                 }
@@ -117,7 +116,6 @@ class VectorsScene : SKScene {
     }
     
     func drawVector(vector: VectorItemViewModel){
-        
         let shapeNode = SKShapeNode()
         let pathToDraw = CGMutablePath()
         

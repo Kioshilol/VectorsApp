@@ -13,5 +13,6 @@ final class SideMenuViewModel: BaseViewModel {
     func deleteVector(uuid: UUID) {
         vectors = vectors.filter({ $0.uuid != uuid })
         vectorManager.deleteVector(uuid: uuid)
+        vectorService.requestRefreshVectors()
     }
 }
