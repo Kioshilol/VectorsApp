@@ -88,19 +88,7 @@ final class VectorHelper: VectorHelperProtocol {
                     }
                 }
                 else {
-                    let dx = vectorToMove!.vector.stickedVector!.vector.endX - vectorToMove!.vector.stickedVector!.vector.startX
-                    let dy = vectorToMove!.vector.stickedVector!.vector.endY - vectorToMove!.vector.stickedVector!.vector.startY
-                    
-                    if (vectorToMove!.vector.stickedVector!.stickPosition == .start){
-                        end = CGPoint(
-                            x: vectorToMove!.vector.stickedVector!.vector.startX + dy,
-                            y: vectorToMove!.vector.stickedVector!.vector.startY - dx)
-                    }
-                    else {
-                        end = CGPoint(
-                            x: vectorToMove!.vector.stickedVector!.vector.endX + dy,
-                            y: vectorToMove!.vector.stickedVector!.vector.endY - dx)
-                    }
+                    setupRightAngle()
                 }
             
                 vectorStart = end;
@@ -121,20 +109,7 @@ final class VectorHelper: VectorHelperProtocol {
                     }
                 }
                 else {
-                    let dx = vectorToMove!.vector.stickedVector!.vector.endX - vectorToMove!.vector.stickedVector!.vector.startX
-                    let dy = vectorToMove!.vector.stickedVector!.vector.endY - vectorToMove!.vector.stickedVector!.vector.startY
-                    
-                    if (vectorToMove!.vector.stickedVector!.stickPosition == .start) {
-                        end = CGPoint(
-                            x: vectorToMove!.vector.stickedVector!.vector.startX + dy,
-                            y: vectorToMove!.vector.stickedVector!.vector.startY - dx)
-                    }
-                    else {
-                        end = CGPoint(
-                            x: vectorToMove!.vector.stickedVector!.vector.endX + dy,
-                            y: vectorToMove!.vector.stickedVector!.vector.endY - dx)
-                    }
-                   
+                    setupRightAngle()
                 }
                
                 arrowHeadPoint = end
@@ -155,6 +130,58 @@ final class VectorHelper: VectorHelperProtocol {
             startY: vectorStart.y,
             endY: arrowHeadPoint.y)
         return true
+        
+        func handleSticks(position: VectorPosition) {
+            if (!tryToCreateRightAngle(position: position)) {
+                if (!tryStickVector()) {
+                    if (vectorToMove?.vector.stickedVector?.stickedVectorPosition == .end) {
+                        vectorToMove?.vector.stickedVector?.vector.stickedVector = nil
+                        vectorToMove?.vector.stickedVector = nil
+                    }
+                    
+                    tryToSetVerticalPoint()
+                    tryToSetHorizontalPoint()
+                }
+            }
+            else {
+                setupRightAngle()
+            }
+        }
+        
+        func setupRightAngle() {
+            let dx = vectorToMove!.vector.stickedVector!.vector.endX - vectorToMove!.vector.stickedVector!.vector.startX
+            let dy = vectorToMove!.vector.stickedVector!.vector.endY - vectorToMove!.vector.stickedVector!.vector.startY
+            
+            let direction = CGVector(dx: dx, dy: dy)
+            
+            let perpendicularDirection = CGVector(dx: -direction.dy, dy: direction.dx)
+            
+            if (vectorToMove!.vector.stickedVector!.stickPosition == .start){
+                setupEndPoint(
+                    x: vectorToMove!.vector.stickedVector!.vector.startX,
+                    y: vectorToMove!.vector.stickedVector!.vector.startY)
+
+            }
+            else {
+                setupEndPoint(
+                    x: vectorToMove!.vector.stickedVector!.vector.endX,
+                    y: vectorToMove!.vector.stickedVector!.vector.endY)
+            }
+            
+            func setupEndPoint(x: CGFloat, y: CGFloat) {
+                let length = CGFloat(hypotf(
+                    Float(location.x - x),
+                    Float(location.y - y)))
+                
+                let normalizedPerpendicular = CGVector(
+                    dx: perpendicularDirection.dx * length / sqrt(perpendicularDirection.dx * perpendicularDirection.dx + perpendicularDirection.dy * perpendicularDirection.dy),
+                    dy: perpendicularDirection.dy * length / sqrt(perpendicularDirection.dx * perpendicularDirection.dx + perpendicularDirection.dy * perpendicularDirection.dy))
+                
+                end = CGPoint(
+                    x: x - normalizedPerpendicular.dx,
+                    y: y - normalizedPerpendicular.dy)
+            }
+        }
         
         func tryToCreateRightAngle(position: VectorPosition) -> Bool {
             if (vectorToMove!.vector.stickedVector == nil) {
@@ -199,13 +226,13 @@ final class VectorHelper: VectorHelperProtocol {
         }
             
         func tryToSetVerticalPoint() {
-            if (end.x >= start.x - verticalThreshold && end.x <= start.x + verticalThreshold){
+            if (end.x >= start.x - verticalThreshold && end.x <= start.x + verticalThreshold) {
                 end = CGPoint(x: start.x, y: end.y)
             }
         }
         
         func tryToSetHorizontalPoint() {
-            if (end.y >= start.y - horizontalThreshold && end.y <= start.y + horizontalThreshold){
+            if (end.y >= start.y - horizontalThreshold && end.y <= start.y + horizontalThreshold) {
                 end = CGPoint(x: end.x, y: start.y)
             }
         }
