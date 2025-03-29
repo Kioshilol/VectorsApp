@@ -1,4 +1,5 @@
 import Foundation
+
 protocol VectorFactoryProtocol {
     func produceVectorItemViewModels(entities: [VectorEntity]) -> [VectorItemViewModel]
     

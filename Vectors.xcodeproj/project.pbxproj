@@ -9,15 +9,11 @@
 /* Begin PBXBuildFile section */
 		0A399ED12D8B900700AC12C6 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = 0A399ED02D8B900700AC12C6 /* Swinject */; };
 		0A39A0BE2D91923400AC12C6 /* CoreData.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0A39A0BC2D91923400AC12C6 /* CoreData.xcdatamodeld */; };
-		0A39A0C12D91924400AC12C6 /* VectorEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A39A0BF2D91924400AC12C6 /* VectorEntity+CoreDataClass.swift */; };
-		0A39A0C22D91924400AC12C6 /* VectorEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A39A0C02D91924400AC12C6 /* VectorEntity+CoreDataProperties.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0A399E712D848B3000AC12C6 /* Vectors.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vectors.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A39A0BD2D91923400AC12C6 /* CoreData.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreData.xcdatamodel; sourceTree = "<group>"; };
-		0A39A0BF2D91924400AC12C6 /* VectorEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VectorEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
-		0A39A0C02D91924400AC12C6 /* VectorEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "VectorEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -43,8 +39,6 @@
 		0A399E682D848B3000AC12C6 = {
 			isa = PBXGroup;
 			children = (
-				0A39A0BF2D91924400AC12C6 /* VectorEntity+CoreDataClass.swift */,
-				0A39A0C02D91924400AC12C6 /* VectorEntity+CoreDataProperties.swift */,
 				0A39A0BC2D91923400AC12C6 /* CoreData.xcdatamodeld */,
 				0A399E732D848B3000AC12C6 /* Vectors */,
 				0A399E722D848B3000AC12C6 /* Products */,
@@ -137,8 +131,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0A39A0C12D91924400AC12C6 /* VectorEntity+CoreDataClass.swift in Sources */,
-				0A39A0C22D91924400AC12C6 /* VectorEntity+CoreDataProperties.swift in Sources */,
 				0A39A0BE2D91923400AC12C6 /* CoreData.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -1,5 +1,4 @@
 struct Constants {
-    
     struct UserDefaultKeys {
         static let verticalThresholdKey = "verticalThreshold"
         static let horizontalThresholdKey = "horizontalThreshold"
@@ -7,4 +6,3 @@ struct Constants {
         static let rightAngleThresholdKey = "stickThreshold"
     }
 }
-

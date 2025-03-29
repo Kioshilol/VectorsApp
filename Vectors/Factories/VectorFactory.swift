@@ -1,4 +1,5 @@
 import Foundation
+
 final class VectorFactory: VectorFactoryProtocol{
     func produceVectorItemViewModels(entities: [VectorEntity]) -> [VectorItemViewModel] {
         return entities.map(produceItemViewModelInternal)

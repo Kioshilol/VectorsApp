@@ -130,23 +130,7 @@ final class VectorHelper: VectorHelperProtocol {
             startY: vectorStart.y,
             endY: arrowHeadPoint.y)
         return true
-        
-        func handleSticks(position: VectorPosition) {
-            if (!tryToCreateRightAngle(position: position)) {
-                if (!tryStickVector()) {
-                    if (vectorToMove?.vector.stickedVector?.stickedVectorPosition == .end) {
-                        vectorToMove?.vector.stickedVector?.vector.stickedVector = nil
-                        vectorToMove?.vector.stickedVector = nil
-                    }
-                    
-                    tryToSetVerticalPoint()
-                    tryToSetHorizontalPoint()
-                }
-            }
-            else {
-                setupRightAngle()
-            }
-        }
+    
         
         func setupRightAngle() {
             let dx = vectorToMove!.vector.stickedVector!.vector.endX - vectorToMove!.vector.stickedVector!.vector.startX

@@ -1,7 +1,7 @@
 import SpriteKit
 import SwiftUI
 
-class VectorsScene : SKScene {
+final class VectorsScene : SKScene {
     private let defaultLineHeight = 3.0
     
     private var vectorHelper: VectorHelperProtocol = CompositionRoot.shared.resolve(VectorHelperProtocol.self)

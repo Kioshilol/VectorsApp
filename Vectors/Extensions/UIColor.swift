@@ -1,14 +1,6 @@
-//
-//  Color.swift
-//  Vectors
-//
-//  Created by paintmethecolorofchaos on 15.03.25.
-//
-
 import UIKit
 
 extension UIColor {
-
     //yolo means you only live once = random hehe :)
     static func yolo() -> UIColor {
         UIColor(

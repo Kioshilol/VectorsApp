@@ -2,7 +2,6 @@ import UIKit
 import SpriteKit
 
 extension SKShapeNode {
-    
     func scaleLineHeight(
         duration: CGFloat,
         startLineHeight: CGFloat,

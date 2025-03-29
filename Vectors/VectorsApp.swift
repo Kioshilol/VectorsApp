@@ -1,10 +1,3 @@
-//
-//  VectorsApp.swift
-//  Vectors
-//
-//  Created by paintmethecolorofchaos on 14.03.25.
-//
-
 import SwiftUI
 
 @main

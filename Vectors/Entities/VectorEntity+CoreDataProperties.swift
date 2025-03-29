@@ -1,11 +1,3 @@
-//
-//  VectorEntity+CoreDataProperties.swift
-//  Vectors
-//
-//  Created by paintmethecolorofchaos on 24.03.25.
-//
-//
-
 import Foundation
 import CoreData
 import UIKit
